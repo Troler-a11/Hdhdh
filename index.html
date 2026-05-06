@@ -3,143 +3,1075 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEO-KYOTO | 3D Assets Premium</title>
+    <title>NEO-KYOTO | Premium 3D & WebGL</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Sans+JP:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <style>
-        body {
-            margin: 0;
-            background-color: #050505;
-            color: #fff;
-            font-family: 'Noto Sans JP', sans-serif;
-            overflow-x: hidden;
+        /* =========================================
+           ОСНОВНІ СТИЛІ (RESET & VARIABLES)
+           ========================================= */
+        :root {
+            --bg-color: #030303;
+            --primary-color: #ff0055;
+            --secondary-color: #1a1a2e;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --neon-glow: 0 0 10px rgba(255, 0, 85, 0.5), 0 0 20px rgba(255, 0, 85, 0.3);
+            --font-jp: 'Noto Sans JP', sans-serif;
+            --font-en: 'Cinzel', serif;
         }
-        canvas {
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-jp);
+            overflow-x: hidden;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+            cursor: crosshair;
+        }
+
+        /* =========================================
+           SCROLLBAR
+           ========================================= */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+
+        /* =========================================
+           BACKGROUND CANVAS
+           ========================================= */
+        #webgl-container {
             position: fixed;
             top: 0;
             left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* =========================================
+           TYPOGRAPHY & UTILITIES
+           ========================================= */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-en);
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .text-neon {
+            color: var(--primary-color);
+            text-shadow: var(--neon-glow);
+        }
+
+        .bg-kanji {
+            position: fixed;
+            top: 10%;
+            right: -5%;
+            font-size: 40vh;
+            color: rgba(255, 255, 255, 0.015);
+            font-weight: 900;
+            writing-mode: vertical-rl;
+            z-index: -2;
+            user-select: none;
+            letter-spacing: -20px;
+        }
+
+        .container {
+            width: 100%;
+            max-w-width: 1400px;
+            margin: 0 auto;
+            padding: 0 5%;
+        }
+
+        /* =========================================
+           NAVIGATION
+           ========================================= */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 30px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(0px);
+            border-bottom: 1px solid transparent;
+        }
+
+        header.scrolled {
+            padding: 15px 5%;
+            background: rgba(3, 3, 3, 0.8);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 5px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .logo span {
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            position: relative;
+            padding-bottom: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+            box-shadow: var(--neon-glow);
+        }
+
+        .nav-links li a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-links li a:hover::after {
+            width: 100%;
+        }
+
+        .auth-btn {
+            padding: 12px 30px;
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            font-family: var(--font-en);
+            font-size: 12px;
+            letter-spacing: 2px;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-color);
+            transition: left 0.4s ease;
             z-index: -1;
         }
-        .glass {
-            background: rgba(255, 255, 255, 0.03);
+
+        .auth-btn:hover::before {
+            left: 0;
+        }
+
+        .auth-btn:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--neon-glow);
+        }
+
+        /* =========================================
+           HERO SECTION
+           ========================================= */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding-top: 80px;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-subtitle {
+            font-size: 14px;
+            color: var(--primary-color);
+            letter-spacing: 10px;
+            margin-bottom: 20px;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        .hero-title {
+            font-size: 85px;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            font-weight: 900;
+        }
+
+        .hero-title span.outline {
+            color: transparent;
+            -webkit-text-stroke: 1px var(--text-main);
+        }
+
+        .hero-desc {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 50px;
+            max-width: 500px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn-primary {
+            padding: 20px 40px;
+            background: var(--text-main);
+            color: var(--bg-color);
+            text-decoration: none;
+            font-family: var(--font-en);
+            font-weight: 700;
+            letter-spacing: 3px;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-color);
+            color: var(--text-main);
+            box-shadow: var(--neon-glow);
+        }
+
+        .btn-secondary {
+            padding: 20px 40px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            text-decoration: none;
+            font-family: var(--font-en);
+            font-weight: 700;
+            letter-spacing: 3px;
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: 0.4s;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            font-size: 14px;
         }
-        .glass:hover {
-            border-color: #ff0055;
-            box-shadow: 0 0 20px rgba(255, 0, 85, 0.2);
+
+        .btn-secondary:hover {
+            border-color: var(--primary-color);
         }
-        .neon-text {
-            text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055;
+
+        /* =========================================
+           STATS SECTION
+           ========================================= */
+        .stats-section {
+            padding: 80px 0;
+            border-top: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(0,0,0,0.3);
         }
-        .japanese-bg {
+
+        .stats-grid {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-family: var(--font-en);
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        /* =========================================
+           GALLERY / CATALOG SECTION
+           ========================================= */
+        .catalog {
+            padding: 150px 0;
+            position: relative;
+        }
+
+        .section-header {
+            margin-bottom: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .section-title {
+            font-size: 48px;
+        }
+
+        .section-title span {
+            color: var(--primary-color);
+        }
+
+        .filter-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .filter-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-family: var(--font-en);
+            font-size: 12px;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            color: var(--text-main);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 25px;
+            border-radius: 4px;
+            backdrop-filter: blur(15px);
+            transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            group: hover;
+        }
+
+        .card::before {
+            content: '';
             position: absolute;
-            right: -50px;
-            top: 20%;
-            font-size: 15rem;
-            opacity: 0.02;
-            writing-mode: vertical-rl;
-            pointer-events: none;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary-color);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 0, 85, 0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-image-wrapper {
+            height: 250px;
+            width: 100%;
+            background: #111;
+            margin-bottom: 25px;
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-image-wrapper::after {
+            content: '3D PREVIEW';
+            position: absolute;
+            font-size: 10px;
+            letter-spacing: 4px;
+            color: rgba(255,255,255,0.2);
+            font-family: var(--font-en);
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-category {
+            font-size: 10px;
+            color: var(--primary-color);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .card-price {
+            font-family: var(--font-en);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .card-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .card-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .card-btn {
+            width: 100%;
+            padding: 15px;
+            background: transparent;
+            border: 1px solid #333;
+            color: var(--text-main);
+            font-family: var(--font-en);
+            font-size: 12px;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .card-btn:hover {
+            background: var(--text-main);
+            color: var(--bg-color);
+        }
+
+        /* =========================================
+           FEATURES SECTION
+           ========================================= */
+        .features {
+            padding: 100px 0;
+            background: linear-gradient(to bottom, transparent, rgba(255,0,85,0.05), transparent);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 60px;
+        }
+
+        .feature-box {
+            text-align: left;
+            padding: 40px;
+            border-left: 1px solid #333;
+            transition: border-color 0.3s ease;
+        }
+
+        .feature-box:hover {
+            border-color: var(--primary-color);
+        }
+
+        .feature-number {
+            font-family: var(--font-en);
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature-title {
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+
+        .feature-text {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* =========================================
+           FOOTER
+           ========================================= */
+        footer {
+            border-top: 1px solid #222;
+            padding: 80px 0 40px;
+            background: #020202;
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+
+        .footer-about p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 20px;
+            max-width: 300px;
+        }
+
+        .footer-title {
+            font-size: 16px;
+            margin-bottom: 25px;
+            letter-spacing: 2px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 15px;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 13px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #111;
+            padding-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #555;
+            letter-spacing: 1px;
+        }
+
+        /* =========================================
+           ANIMATIONS
+           ========================================= */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 2px 0 var(--primary-color), -2px 0 #0ff; }
+            20% { text-shadow: -2px 0 var(--primary-color), 2px 0 #0ff; }
+            40% { text-shadow: 2px 0 var(--primary-color), -2px 0 #0ff; }
+            60% { text-shadow: -2px 0 var(--primary-color), 2px 0 #0ff; }
+            80% { text-shadow: 2px 0 var(--primary-color), -2px 0 #0ff; }
+            100% { text-shadow: 2px 0 var(--primary-color), -2px 0 #0ff; }
+        }
+
+        .glitch-hover:hover {
+            animation: glitch 0.3s linear infinite;
+        }
+
+        /* =========================================
+           RESPONSIVE
+           ========================================= */
+        @media (max-width: 1024px) {
+            .hero-title { font-size: 60px; }
+            .grid-container { grid-template-columns: repeat(2, 1fr); }
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 40px; }
+            .nav-links { display: none; }
+            .grid-container { grid-template-columns: 1fr; }
+            .features-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .stats-grid { flex-direction: column; gap: 40px; }
+            .bg-kanji { font-size: 20vh; right: 0; }
         }
     </style>
 </head>
 <body>
 
-    <div class="japanese-bg">デジタル芸術</div>
+    <div class="bg-kanji">魂の刃</div>
 
-    <nav class="flex justify-between items-center p-8 fixed w-full z-10">
-        <div class="text-2xl font-bold tracking-tighter neon-text">魂 SOUL_BLADE</div>
-        <div class="hidden md:flex gap-10 text-sm uppercase tracking-widest">
-            <a href="#" class="hover:text-pink-500 transition">Колекції</a>
-            <a href="#" class="hover:text-pink-500 transition">Катана</a>
-            <a href="#" class="hover:text-pink-500 transition">Самураї</a>
-            <a href="#" class="hover:text-pink-500 transition">Про проєкт</a>
-        </div>
-        <button class="glass px-6 py-2 rounded-full text-xs uppercase tracking-widest">Увійти</button>
-    </nav>
+    <div id="webgl-container"></div>
 
-    <main class="relative pt-40 px-8">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-            <div>
-                <h1 class="text-8xl font-bold leading-none mb-6">新世界<br><span class="text-pink-500">NEW GEN</span> 3D</h1>
-                <p class="text-gray-400 text-lg max-w-md mb-10">
-                    Ексклюзивні моделі в стилі японського нео-футуризму. Найвища деталізація для ваших найкращих проектів.
-                </p>
-                <div class="flex gap-4">
-                    <button class="bg-white text-black px-10 py-4 font-bold rounded-sm hover:bg-pink-500 hover:text-white transition">КАТАЛОГ</button>
-                    <button class="glass px-10 py-4 font-bold rounded-sm">ДЕМO</button>
-                </div>
-            </div>
+    <header id="navbar">
+        <a href="#" class="logo">魂 <span>SOUL_BLADE</span></a>
+        <ul class="nav-links">
+            <li><a href="#models">Моделі</a></li>
+            <li><a href="#features">Технології</a></li>
+            <li><a href="#engine">Двигун</a></li>
+            <li><a href="#contact">Контакти</a></li>
+        </ul>
+        <button class="auth-btn">CONNECT WALLET</button>
+    </header>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div class="glass p-6 rounded-xl mt-10">
-                    <div class="h-40 bg-gradient-to-br from-gray-800 to-transparent rounded mb-4"></div>
-                    <h3 class="font-bold">CYBER KATANA V.1</h3>
-                    <p class="text-xs text-pink-500">$4,500.00</p>
-                </div>
-                <div class="glass p-6 rounded-xl">
-                    <div class="h-40 bg-gradient-to-br from-pink-900 to-transparent rounded mb-4"></div>
-                    <h3 class="font-bold">ONYX MASK</h3>
-                    <p class="text-xs text-pink-500">$12,000.00</p>
-                </div>
+    <section class="hero container">
+        <div class="hero-content">
+            <span class="hero-subtitle">Вищий рівень 3D Ассетів</span>
+            <h1 class="hero-title">
+                NEO-TOKYO <br>
+                <span class="outline">DIGITAL</span> ASSETS
+            </h1>
+            <p class="hero-desc">
+                Колекція високополігональних 3D моделей вартістю 90 мільйонів доларів. Створено для розробників, які цінують ідеальну топологію та естетику японського кіберпанку.
+            </p>
+            <div class="hero-actions">
+                <a href="#models" class="btn-primary glitch-hover">ОГЛЯД КАТАЛОГУ</a>
+                <a href="#" class="btn-secondary">ДОКУМЕНТАЦІЯ</a>
             </div>
         </div>
-    </main>
+    </section>
+
+    <section class="stats-section">
+        <div class="container stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">90M+</div>
+                <div class="stat-label">Загальна вартість</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">4K</div>
+                <div class="stat-label">PBR Текстури</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">120+</div>
+                <div class="stat-label">Унікальних моделей</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">0.1ms</div>
+                <div class="stat-label">Оптимізація рендеру</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">ENGINEERING <span>STANDARDS</span></h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-box">
+                    <span class="feature-number">01</span>
+                    <h3 class="feature-title">Ідеальна топологія</h3>
+                    <p class="feature-text">Всі моделі пройшли ретельну перевірку на наявність N-гонів. Тільки чисті квади, готові до сабдівіжну та складної анімації.</p>
+                </div>
+                <div class="feature-box">
+                    <span class="feature-number">02</span>
+                    <h3 class="feature-title">Кінетичний Ріггінг</h3>
+                    <p class="feature-text">Скелети налаштовані з урахуванням фізики магнітних двигунів та реальної анатомії. Ідеально для бойових сцен.</p>
+                </div>
+                <div class="feature-box">
+                    <span class="feature-number">03</span>
+                    <h3 class="feature-title">PBR Матеріали</h3>
+                    <p class="feature-text">Кожен ассет включає карти Albedo, Normal, Roughness, Metalness та Emissive у розширенні від 4K до 8K.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="models" class="catalog container">
+        <div class="section-header">
+            <h2 class="section-title">PREMIUM <span>COLLECTION</span></h2>
+            <div class="filter-container">
+                <button class="filter-btn active">ВСІ</button>
+                <button class="filter-btn">ЗБРОЯ</button>
+                <button class="filter-btn">ПЕРСОНАЖІ</button>
+                <button class="filter-btn">ОТОЧЕННЯ</button>
+            </div>
+        </div>
+        
+        <div class="grid-container" id="catalog-grid"></div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <a href="#" class="logo">魂 <span>SOUL_BLADE</span></a>
+                    <p>Платформа преміальних 3D ассетів для розробників нового покоління. Естетика, якість та продуктивність.</p>
+                </div>
+                <div>
+                    <h4 class="footer-title">ПРОДУКТИ</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Каталог моделей</a></li>
+                        <li><a href="#">Шейдери</a></li>
+                        <li><a href="#">Анімації</a></li>
+                        <li><a href="#">Ліцензії</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-title">РЕСУРСИ</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Документація</a></li>
+                        <li><a href="#">API</a></li>
+                        <li><a href="#">Блог</a></li>
+                        <li><a href="#">Підтримка</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-title">СОЦМЕРЕЖІ</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">GitHub</a></li>
+                        <li><a href="#">Twitter (X)</a></li>
+                        <li><a href="#">Discord</a></li>
+                        <li><a href="#">Telegram</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 SOUL_BLADE. All rights reserved.</p>
+                <p>Designed for Next-Gen Web</p>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        // Ініціалізація 3D фону
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+        // --- 1. ДАНІ ДЛЯ КАТАЛОГУ ---
+        // Масив об'єктів для генерації карток (більше даних = масивніший код)
+        const modelsData = [
+            {
+                id: 'mdl_001',
+                title: "Akashi's Cursed Blade",
+                category: "ЗБРОЯ",
+                price: "$12,500.00",
+                desc: "Унікальна катана з гравіюванням клану. Включає шейдери проклятої енергії.",
+                color: "#ff0055"
+            },
+            {
+                id: 'mdl_002',
+                title: "Ryuzan Kai Armor Set",
+                category: "ПЕРСОНАЖІ / БРОНЯ",
+                price: "$45,000.00",
+                desc: "Повний сет броні важкого самурая. Ідеальна топологія для динамічних рухів.",
+                color: "#00aaff"
+            },
+            {
+                id: 'mdl_003',
+                title: "Toshi's Spirit Mask",
+                category: "АКСЕСУАРИ",
+                price: "$8,200.00",
+                desc: "Маска духа (Оні) з емісійними матеріалами для очей.",
+                color: "#ffaa00"
+            },
+            {
+                id: 'mdl_004',
+                title: "Magnetic Engine Core",
+                category: "МЕХАНІКА",
+                price: "$25,000.00",
+                desc: "3D модель вічного магнітного двигуна зі складною внутрішньою структурою.",
+                color: "#00ff88"
+            },
+            {
+                id: 'mdl_005',
+                title: "Neon Kyoto Alley",
+                category: "ОТОЧЕННЯ",
+                price: "$60,000.00",
+                desc: "Модульна система вулиць у стилі кіберпанк-Японії.",
+                color: "#ff00ff"
+            },
+            {
+                id: 'mdl_006',
+                title: "Cyber-Shuriken V.4",
+                category: "ЗБРОЯ",
+                price: "$3,100.00",
+                desc: "Метальна зброя з плазмовими лезами.",
+                color: "#ff0055"
+            },
+            {
+                id: 'mdl_007',
+                title: "Holographic Shrine",
+                category: "ОТОЧЕННЯ",
+                price: "$18,000.00",
+                desc: "Святилище з голографічними воротами Торії.",
+                color: "#00aaff"
+            },
+            {
+                id: 'mdl_008',
+                title: "Ronin Mecha Suit",
+                category: "ПЕРСОНАЖІ",
+                price: "$85,000.00",
+                desc: "Повністю оснащений мех-костюм з PBR текстурами.",
+                color: "#ffffff"
+            }
+        ];
 
-        // Геометрія - Абстрактне "Сонце"
-        const geometry = new THREE.IcosahedronGeometry(2, 2);
-        const material = new THREE.MeshStandardMaterial({ 
-            color: 0xff0055, 
-            wireframe: true,
-            emissive: 0xff0055,
-            emissiveIntensity: 0.5
+        // --- 2. ГЕНЕРАЦІЯ HTML ЧЕРЕЗ JS ---
+        const gridContainer = document.getElementById('catalog-grid');
+        
+        modelsData.forEach(model => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            // Динамічний градієнт для прев'ю
+            const bgGradient = `linear-gradient(135deg, ${model.color}22 0%, #111 100%)`;
+            
+            card.innerHTML = `
+                <div class="card-image-wrapper" style="background: ${bgGradient}; border: 1px solid ${model.color}44;">
+                    </div>
+                <div class="card-meta">
+                    <span class="card-category">${model.category}</span>
+                    <span class="card-price" style="color: ${model.color}">${model.price}</span>
+                </div>
+                <h3 class="card-title">${model.title}</h3>
+                <p class="card-desc">${model.desc}</p>
+                <button class="card-btn">ДОДАТИ В КОШИК</button>
+            `;
+            gridContainer.appendChild(card);
         });
-        const sphere = new THREE.Mesh(geometry, material);
-        scene.add(sphere);
 
-        // Світло
-        const pointLight = new THREE.PointLight(0xffffff, 1);
-        pointLight.position.set(5, 5, 5);
-        scene.add(pointLight);
-
-        const ambLight = new THREE.AmbientLight(0x404040);
-        scene.add(ambLight);
-
-        camera.position.z = 5;
-
-        // Анімація
-        function animate() {
-            requestAnimationFrame(animate);
-            sphere.rotation.x += 0.002;
-            sphere.rotation.y += 0.002;
-            renderer.render(scene, camera);
-        }
-
-        // Взаємодія з мишею
-        window.addEventListener('mousemove', (e) => {
-            const x = (e.clientX / window.innerWidth - 0.5) * 2;
-            const y = (e.clientY / window.innerHeight - 0.5) * 2;
-            sphere.position.x = x * 0.5;
-            sphere.position.y = -y * 0.5;
+        // --- 3. UI ЛОГІКА (SCROLL & NAVBAR) ---
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
         });
 
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
+        // --- 4. МАСИВНИЙ КОД THREE.JS ДЛЯ ФОНУ ---
+        // Цей блок створює крутий неоновий ландшафт і частинки
+        const initWebGL = () => {
+            const container = document.getElementById('webgl-container');
+            
+            // Сцена, Камера, Рендерер
+            const scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x030303, 0.0015);
+            
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+            camera.position.y = 50;
+            camera.position.z = 200;
+            camera.position.x = 0;
+            
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+            container.appendChild(renderer.domElement);
 
-        animate();
+            // Група для обертання всього світу
+            const worldGroup = new THREE.Group();
+            scene.add(worldGroup);
+
+            // --- ДОДАЄМО СІТКУ (КІБЕРПАНК ЗЕМЛЯ) ---
+            const planeGeometry = new THREE.PlaneGeometry(2000, 2000, 40, 40);
+            // Робимо рельєф
+            const posAttr = planeGeometry.attributes.position;
+            for (let i = 0; i < posAttr.count; i++) {
+                const z = posAttr.getZ(i);
+                // Рандомна висота для ефекту гір/хвиль
+                const v = Math.random() * 15;
+                posAttr.setZ(i, z + v);
+            }
+            planeGeometry.computeVertexNormals();
+
+            const planeMaterial = new THREE.MeshBasicMaterial({
+                color: 0xff0055,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.15
+            });
+
+            const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+            plane.rotation.x = -Math.PI / 2;
+            plane.position.y = -50;
+            worldGroup.add(plane);
+
+            // --- ДОДАЄМО ЦЕНТРАЛЬНИЙ ОБ'ЄКТ (АБСТРАКТНЕ СОНЦЕ/ЯДРО) ---
+            // Використання складної геометрії
+            const coreGeometry = new THREE.IcosahedronGeometry(40, 2);
+            
+            // Кастомний шейдерний матеріал (Це те, що робить код "дорогим")
+            const vertexShader = `
+                varying vec3 vNormal;
+                varying vec3 vPosition;
+                uniform float time;
+                void main() {
+                    vNormal = normal;
+                    vPosition = position;
+                    // Пульсація
+                    vec3 newPosition = position + normal * sin(time * 2.0 + position.y * 0.1) * 2.0;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
+                }
+            `;
+            
+            const fragmentShader = `
+                varying vec3 vNormal;
+                varying vec3 vPosition;
+                uniform float time;
+                uniform vec3 color1;
+                uniform vec3 color2;
+                void main() {
+                    float intensity = pow(0.6 - dot(vNormal, vec3(0, 0, 1.0)), 2.0);
+                    vec3 glow = mix(color1, color2, sin(time + vPosition.y * 0.05) * 0.5 + 0.5);
+                    gl_FragColor = vec4(glow * intensity * 1.5, 1.0);
+                }
+            `;
+
+            const uniforms = {
+                time: { value: 0 },
+                color1: { value: new THREE.Color(0xff0055) }, // Sakura Pink
+                color2: { value: new THREE.Color(0x00aaff) }  // Cyber Blue
+            };
+
+            const coreMaterial = new THREE.ShaderMaterial({
+                uniforms: uniforms,
+                vertexShader: vertexShader,
+                fragmentShader: fragmentShader,
+                wireframe: true,
+                transparent: true
+            });
+
+            const core = new THREE.Mesh(coreGeometry, coreMaterial);
+            core.position.set(0, 80, -100);
+            worldGroup.add(core);
+
+            // --- ДОДАЄМО ЧАСТИНКИ (ІСКРИ/ПОПІЛ) ---
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 2000;
+            const posArray = new Float32Array(particlesCount * 3);
+            
+            for(let i = 0; i < particlesCount * 3; i++) {
+                // Розподіл в просторі
+                posArray[i] = (Math.random() - 0.5) * 1000;
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 2,
+                color: 0xff0055,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+            
+            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            worldGroup.add(particlesMesh);
+
+            // --- ВЗАЄМОДІЯ З МИШЕЮ (PARALLAX ЕФЕКТ) ---
+            let mouseX = 0;
+            let mouseY = 0;
+            let targetX = 0;
+            let targetY = 0;
+            
+            const windowHalfX = window.innerWidth / 2;
+            const windowHalfY = window.innerHeight / 2;
+
+            document.addEventListener('mousemove', (event) => {
+                mouseX = (event.clientX - windowHalfX);
+                mouseY = (event.clientY - windowHalfY);
+            });
+
+            // --- РЕСАЙЗ ВІКНА ---
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            // --- АНІМАЦІЙНИЙ ЦИКЛ ---
+            const clock = new THREE.Clock();
+
+            const animate = () => {
+                requestAnimationFrame(animate);
+                
+                const elapsedTime = clock.getElapsedTime();
+
+                // Оновлення часу для шейдера
+                uniforms.time.value = elapsedTime;
+
+                // Обертання ядра
+                core.rotation.y += 0.005;
+                core.rotation.x += 0.002;
+
+                // Рух сітки
+                plane.position.z = (elapsedTime * 20) % 50;
+
+                // Плавний рух камери за мишею
+                targetX = mouseX * 0.05;
+                targetY = mouseY * 0.05;
+                
+                worldGroup.rotation.y += 0.02 * (targetX * 0.02 - worldGroup.rotation.y);
+                worldGroup.rotation.x += 0.02 * (targetY * 0.02 - worldGroup.rotation.x);
+
+                // Анімація частинок
+                particlesMesh.rotation.y = -elapsedTime * 0.05;
+                particlesMesh.position.y = Math.sin(elapsedTime * 0.5) * 10;
+
+                renderer.render(scene, camera);
+            };
+
+            animate();
+        };
+
+        // Запуск 3D після завантаження сторінки
+        window.addEventListener('load', initWebGL);
+        
+        // --- 5. КОНСОЛЬНІ ПОВІДОМЛЕННЯ ДЛЯ РОЗРОБНИКА ---
+        console.log("%c NEO-KYOTO SYSTEM INITIALIZED", "color: #ff0055; font-size: 20px; font-weight: bold; border: 2px solid #ff0055; padding: 10px;");
+        console.log("3D Engine: Three.js r128");
+        console.log("Memory Status: Optimized");
+        console.log("Ready for deployment on Pydroid 3 or GitHub Pages.");
     </script>
 </body>
 </html>
