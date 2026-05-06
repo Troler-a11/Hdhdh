@@ -2,673 +2,383 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TOXIC ILLUSION | OVERDRIVE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AETHER | CRYSTALLINE INTERFACE</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;800&family=Playfair+Display:italic,wght@1,900&display=swap" rel="stylesheet">
 
     <style>
-        /* =======================================================
-           1. CSS ЗМІННІ ТА ЯДРО (TOXIC THEME)
-           ======================================================= */
         :root {
-            --toxic-green: #39ff14;
-            --toxic-dark: #002200;
-            --pure-black: #020202;
-            --ui-border: rgba(57, 255, 20, 0.3);
-            --font-main: 'Orbitron', sans-serif;
-            --font-code: 'Share Tech Mono', monospace;
-            --glitch-offset: 3px;
+            --bg: #f8fafd;
+            --accent: #007aff;
+            --glass: rgba(255, 255, 255, 0.7);
+            --text: #0a111f;
+            --border: rgba(0, 122, 255, 0.1);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            cursor: crosshair; /* Токсичний приціл */
         }
 
         body {
-            background-color: var(--pure-black);
-            color: var(--toxic-green);
-            font-family: var(--font-main);
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Plus Jakarta Sans', sans-serif;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Скроллбар */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: var(--pure-black); }
-        ::-webkit-scrollbar-thumb { background: var(--toxic-dark); border: 1px solid var(--toxic-green); }
-
-        /* =======================================================
-           2. CANVAS & SHADERS (BACKGROUND ILLUSIONS)
-           ======================================================= */
-        #shader-bg {
+        #canvas-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.4; /* Гіпнотичний фон */
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #ffffff 0%, #eef5ff 100%);
         }
 
-        #three-canvas {
+        /* UI Navigation */
+        nav {
             position: fixed;
             top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 1;
-            pointer-events: none;
-            mix-blend-mode: screen;
-        }
-
-        /* Оптична ілюзія Moire Pattern (Накладання сіток) */
-        .moire-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.8) 2px, rgba(0,0,0,0.8) 4px);
-            z-index: 2;
-            pointer-events: none;
-            opacity: 0.5;
-        }
-
-        /* =======================================================
-           3. UI ЕЛЕМЕНТИ ТА СТРУКТУРА
-           ======================================================= */
-        .ui-layer {
-            position: relative;
-            z-index: 10;
             width: 100%;
-        }
-
-        header {
-            position: fixed;
-            top: 0; left: 0; width: 100%;
-            padding: 20px 40px;
+            padding: 30px 60px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--ui-border);
-            background: rgba(2, 2, 2, 0.5);
-            backdrop-filter: blur(10px);
             z-index: 100;
         }
 
         .logo {
-            font-weight: 900;
-            font-size: 24px;
+            font-size: 1.2rem;
+            font-weight: 800;
             letter-spacing: 4px;
-            text-shadow: 0 0 10px var(--toxic-green);
-            animation: pulse-glow 2s infinite alternate;
+            text-transform: uppercase;
+            color: var(--text);
         }
 
-        @keyframes pulse-glow {
-            0% { text-shadow: 0 0 5px var(--toxic-green); }
-            100% { text-shadow: 0 0 20px var(--toxic-green), 0 0 40px var(--toxic-green); }
-        }
-
+        /* Hero Section */
         section {
             min-height: 100vh;
+            width: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 100px 5vw;
+            padding: 0 10vw;
             position: relative;
         }
 
-        /* =======================================================
-           4. КІНЕТИЧНА ТИПОГРАФІКА ТА GLITCH
-           ======================================================= */
+        .hero-text-wrap {
+            max-width: 900px;
+            position: relative;
+            z-index: 2;
+        }
+
         .hero-title {
-            font-size: clamp(3rem, 8vw, 8rem);
-            font-weight: 900;
-            line-height: 1;
-            text-transform: uppercase;
-            position: relative;
-            display: inline-block;
+            font-size: clamp(4rem, 12vw, 10rem);
+            font-weight: 800;
+            line-height: 0.85;
+            letter-spacing: -0.04em;
+            margin-bottom: 40px;
         }
 
-        .glitch-toxic {
-            position: relative;
-            color: var(--toxic-green);
-        }
-        
-        .glitch-toxic::before, .glitch-toxic::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--pure-black);
-            opacity: 0.8;
-        }
-        
-        .glitch-toxic::before {
-            left: var(--glitch-offset);
-            text-shadow: -2px 0 red;
-            animation: glitch-anim-1 2s infinite linear alternate-reverse;
-        }
-        
-        .glitch-toxic::after {
-            left: calc(-1 * var(--glitch-offset));
-            text-shadow: -2px 0 blue;
-            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        .hero-title span {
+            display: block;
+            opacity: 0;
+            transform: translateY(100px);
         }
 
-        @keyframes glitch-anim-1 {
-            0% { clip-path: inset(20% 0 80% 0); }
-            20% { clip-path: inset(60% 0 10% 0); }
-            40% { clip-path: inset(40% 0 50% 0); }
-            60% { clip-path: inset(80% 0 5% 0); }
-            80% { clip-path: inset(10% 0 70% 0); }
-            100% { clip-path: inset(30% 0 40% 0); }
-        }
-
-        @keyframes glitch-anim-2 {
-            0% { clip-path: inset(10% 0 60% 0); }
-            20% { clip-path: inset(30% 0 20% 0); }
-            40% { clip-path: inset(70% 0 10% 0); }
-            60% { clip-path: inset(20% 0 50% 0); }
-            80% { clip-path: inset(90% 0 5% 0); }
-            100% { clip-path: inset(50% 0 30% 0); }
-        }
-
-        .subtitle {
-            font-family: var(--font-code);
+        .hero-description {
             font-size: 1.2rem;
-            max-width: 600px;
-            margin-top: 20px;
-            color: #888;
-            border-left: 2px solid var(--toxic-green);
-            padding-left: 15px;
+            line-height: 1.6;
+            max-width: 450px;
+            color: rgba(10, 17, 31, 0.6);
+            opacity: 0;
+            transform: translateY(30px);
         }
 
-        /* =======================================================
-           5. ІНТЕРАКТИВНІ КНОПКИ (OVERDRIVE)
-           ======================================================= */
-        .controls-grid {
-            display: flex;
-            gap: 20px;
-            margin-top: 50px;
-            flex-wrap: wrap;
+        /* Floating Cards Interaction */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 10vh;
         }
 
-        /* Кнопка 1: Cyber-Fill */
-        .btn-cyber {
+        .ethereal-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            padding: 60px 40px;
+            border-radius: 2px;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
-            padding: 20px 40px;
-            background: transparent;
-            color: var(--toxic-green);
-            font-family: var(--font-main);
-            font-size: 1rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            border: 1px solid var(--toxic-green);
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 122, 255, 0.05);
+        }
+
+        .ethereal-card:hover {
+            transform: translateY(-20px);
+            border-color: var(--accent);
+            box-shadow: 0 30px 60px rgba(0, 122, 255, 0.1);
+        }
+
+        .card-label {
+            font-size: 0.7rem;
             text-transform: uppercase;
-            overflow: hidden;
-            transition: 0.3s;
-            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+            letter-spacing: 2px;
+            color: var(--accent);
+            margin-bottom: 20px;
+            display: block;
         }
 
-        .btn-cyber::before {
-            content: '';
+        .card-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        /* Abstract Elements */
+        .circle-decor {
             position: absolute;
-            top: 0; left: -100%; width: 100%; height: 100%;
-            background: var(--toxic-green);
-            transition: left 0.4s cubic-bezier(0.86, 0, 0.07, 1);
-            z-index: -1;
-        }
-
-        .btn-cyber:hover { color: var(--pure-black); box-shadow: 0 0 20px var(--toxic-green); }
-        .btn-cyber:hover::before { left: 0; }
-
-        /* Кнопка 2: Matrix Scanner */
-        .btn-scan {
-            position: relative;
-            padding: 20px 40px;
-            background: rgba(0, 50, 0, 0.3);
-            color: #fff;
-            border: none;
-            font-family: var(--font-code);
-            overflow: hidden;
-        }
-
-        .btn-scan::after {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%; width: 200%; height: 20%;
-            background: linear-gradient(to bottom, transparent, var(--toxic-green), transparent);
-            transform: rotate(45deg);
-            animation: scan-line 2s infinite linear;
-            opacity: 0.5;
+            width: 400px;
+            height: 400px;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            top: -100px;
+            right: -100px;
             pointer-events: none;
         }
 
-        @keyframes scan-line {
-            0% { transform: translateY(-100px) rotate(45deg); }
-            100% { transform: translateY(200px) rotate(45deg); }
+        /* Custom Cursor */
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent);
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
         }
 
-        /* Кнопка 3: Glitch Magnetic */
-        .btn-magnetic {
-            padding: 20px 40px;
-            border: 1px dashed var(--toxic-green);
-            border-radius: 50px;
-            color: var(--toxic-green);
-            transition: all 0.2s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: radial-gradient(circle, rgba(57,255,20,0.1) 0%, transparent 70%);
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--accent);
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 999;
+            transition: all 0.15s ease-out;
         }
 
-        /* =======================================================
-           6. СІТКА ІЛЮЗІЙ (3D TILT CARDS)
-           ======================================================= */
-        .illusion-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            margin-top: 100px;
-            perspective: 1000px;
-        }
-
-        .card-tilt {
-            background: rgba(10, 10, 10, 0.8);
-            border: 1px solid var(--ui-border);
-            height: 400px;
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transform-style: preserve-3d;
-            transition: transform 0.1s;
+        /* Buttons */
+        .btn-aether {
+            padding: 20px 45px;
+            background: var(--text);
+            color: white;
+            border: none;
+            font-family: inherit;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 50px;
             position: relative;
+            cursor: pointer;
             overflow: hidden;
         }
 
-        /* Внутрішній ілюзорний фон картки */
-        .card-tilt::before {
+        .btn-aether::after {
             content: '';
             position: absolute;
-            inset: 0;
-            background: repeating-radial-gradient(circle, transparent, transparent 10px, rgba(57, 255, 20, 0.05) 10px, rgba(57, 255, 20, 0.05) 20px);
-            animation: hypnotic-spin 20s infinite linear;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: var(--accent);
+            transition: transform 0.4s ease;
             z-index: -1;
         }
 
-        @keyframes hypnotic-spin {
-            100% { transform: rotate(360deg) scale(1.5); }
+        .btn-aether:hover::after {
+            transform: translateX(100%);
         }
-
-        .card-tilt h3 {
-            font-size: 2rem;
-            transform: translateZ(50px); /* 3D виліт тексту */
-            text-shadow: 0 5px 15px rgba(0,0,0,1);
-        }
-
-        .card-tilt p {
-            font-family: var(--font-code);
-            color: #aaa;
-            transform: translateZ(30px);
-        }
-
-        .card-number {
-            position: absolute;
-            top: 10px; right: 20px;
-            font-size: 8rem;
-            color: rgba(57, 255, 20, 0.05);
-            font-weight: 900;
-            transform: translateZ(-20px);
-        }
-
-        /* Декоративні кути */
-        .corner {
-            position: absolute; width: 15px; height: 15px; border: 2px solid var(--toxic-green);
-        }
-        .c-tl { top: 0; left: 0; border-right: none; border-bottom: none; }
-        .c-tr { top: 0; right: 0; border-left: none; border-bottom: none; }
-        .c-bl { bottom: 0; left: 0; border-right: none; border-top: none; }
-        .c-br { bottom: 0; right: 0; border-left: none; border-top: none; }
-
     </style>
 </head>
 <body>
 
-    <canvas id="shader-bg"></canvas>
-    <canvas id="three-canvas"></canvas>
-    <div class="moire-overlay"></div>
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
 
-    <header>
-        <div class="logo">TOXIC_SYS</div>
-        <div style="font-family: var(--font-code); color: var(--toxic-green);">STATUS: OVERLOAD</div>
-    </header>
+    <div id="canvas-container"></div>
 
-    <div class="ui-layer">
-        
-        <section id="s1">
-            <div>
-                <h1 class="hero-title glitch-toxic" data-text="SYSTEM">SYSTEM</h1><br>
-                <h1 class="hero-title glitch-toxic" data-text="OVERDRIVE">OVERDRIVE</h1>
-                
-                <p class="subtitle">
-                    > Ініціалізація протоколу оптичної ілюзії...<br>
-                    > Рендер замкнутих просторових фігур: АКТИВНО<br>
-                    > Рівень токсичності: 99.9%
+    <nav>
+        <div class="logo">Aether</div>
+        <div style="display: flex; gap: 40px;">
+            <span style="font-weight: 800; font-size: 0.8rem; letter-spacing: 1px;">01. Concept</span>
+            <span style="font-weight: 800; font-size: 0.8rem; letter-spacing: 1px;">02. Gallery</span>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <section class="hero">
+            <div class="hero-text-wrap">
+                <h1 class="hero-title">
+                    <span class="t-line">POETRY</span>
+                    <span class="t-line" style="color: var(--accent); font-family: 'Playfair Display', serif;">IN MOTION</span>
+                </h1>
+                <p class="hero-description">
+                    Чистий дизайн. Плавна кінетика. Світловий потік даних, що перетворюється на візуальний досвід майбутнього.
                 </p>
+                <button class="btn-aether">Відкрити</button>
+            </div>
+        </section>
 
-                <div class="controls-grid">
-                    <button class="btn-cyber">ІНІЦІЮВАТИ</button>
-                    <button class="btn-scan">СКАЛІБРУВАТИ</button>
-                    <div class="btn-magnetic hover-magnet">
-                        <span>[ ПУЛЬС ]</span>
-                    </div>
+        <section class="features">
+            <div class="grid-container">
+                <div class="ethereal-card" data-speed="0.05">
+                    <span class="card-label">Fluidity</span>
+                    <h2 class="card-title">М’якість ліній</h2>
+                    <p>Алгоритми, що імітують рух води та світла в цифровому просторі.</p>
+                </div>
+                <div class="ethereal-card" data-speed="0.1">
+                    <span class="card-label">Clarity</span>
+                    <h2 class="card-title">Кристалізація</h2>
+                    <p>Прозорість як основа інтерфейсу. Тільки важливе, нічого зайвого.</p>
+                </div>
+                <div class="ethereal-card" data-speed="0.07">
+                    <span class="card-label">Essence</span>
+                    <h2 class="card-title">Чистий потік</h2>
+                    <p>Взаємодія, що відчувається на рівні інтуїції та природних ритмів.</p>
                 </div>
             </div>
         </section>
 
-        <section id="s2">
-            <h2 class="hero-title glitch-toxic" style="font-size: 3rem;" data-text="DATA CORES">DATA CORES</h2>
-            
-            <div class="illusion-grid">
-                <div class="card-tilt">
-                    <div class="corner c-tl"></div><div class="corner c-tr"></div>
-                    <div class="corner c-bl"></div><div class="corner c-br"></div>
-                    <div class="card-number">01</div>
-                    <h3>TESSERACT</h3>
-                    <p>Багатовимірна структура даних. Уникайте прямого візуального контакту більше 10 секунд.</p>
-                    <button class="btn-cyber" style="width: 100%; padding: 10px; font-size: 0.8rem;">ДЕТАЛІ</button>
-                </div>
-                
-                <div class="card-tilt">
-                    <div class="corner c-tl"></div><div class="corner c-tr"></div>
-                    <div class="corner c-bl"></div><div class="corner c-br"></div>
-                    <div class="card-number">02</div>
-                    <h3>FRACTAL</h3>
-                    <p>Рекурсивний алгоритм стиснення простору. Відображення ідеальної симетрії хаосу.</p>
-                    <button class="btn-cyber" style="width: 100%; padding: 10px; font-size: 0.8rem;">ДЕТАЛІ</button>
-                </div>
-
-                <div class="card-tilt">
-                    <div class="corner c-tl"></div><div class="corner c-tr"></div>
-                    <div class="corner c-bl"></div><div class="corner c-br"></div>
-                    <div class="card-number">03</div>
-                    <h3>VOID</h3>
-                    <p>Абсолютний нуль інформації. Зона поглинання світла та енергії користувача.</p>
-                    <button class="btn-cyber" style="width: 100%; padding: 10px; font-size: 0.8rem;">ДЕТАЛІ</button>
-                </div>
-            </div>
+        <section style="height: 50vh; align-items: center; justify-content: center;">
+            <p style="letter-spacing: 10px; opacity: 0.2; font-weight: 800;">A E T H E R — 2 0 2 6</p>
         </section>
-
-        <section id="s3" style="align-items: center; text-align: center;">
-            <h1 class="hero-title glitch-toxic" data-text="END OF LINE">END OF LINE</h1>
-            <p class="subtitle" style="border: none; text-align: center; margin-bottom: 40px;">
-                Матриця побудована. Клод залишився позаду.
-            </p>
-            <button class="btn-cyber" style="font-size: 1.5rem; padding: 30px 60px;">REBOOT SYSTEM</button>
-        </section>
-
     </div>
 
     <script>
-        // Код оптимізовано для локального запуску (напр. Pydroid 3)
-        // Всі текстури генеруються процедурно через WebGL.
-
-        /* ---------------------------------------------------
-           A. ШЕЙДЕРНИЙ ФОН (TOXIC PLASMA)
-           --------------------------------------------------- */
-        const canvasBg = document.getElementById('shader-bg');
-        const gl = canvasBg.getContext('webgl');
-
-        const vsSource = `
-            attribute vec2 position;
-            varying vec2 vUv;
-            void main() {
-                vUv = position * 0.5 + 0.5;
-                gl_Position = vec4(position, 0.0, 1.0);
-            }
-        `;
-
-        const fsSource = `
-            precision highp float;
-            uniform float uTime;
-            uniform vec2 uResolution;
-            varying vec2 vUv;
-
-            // Хакерський шум (Plasma)
-            float noise(vec2 p) {
-                return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
-            }
-
-            void main() {
-                vec2 st = gl_FragCoord.xy / uResolution.xy;
-                st.x *= uResolution.x / uResolution.y;
-
-                // Складна математика для створення токсичної плазми
-                vec2 pos = vec2(st * 3.0);
-                float df = 0.0;
-                
-                pos.x += sin(uTime * 0.5 + pos.y * 2.0);
-                pos.y += cos(uTime * 0.3 + pos.x * 2.0);
-                
-                df = length(pos - vec2(1.5));
-                
-                // Кільця ілюзії
-                float rings = sin(df * 20.0 - uTime * 5.0);
-                
-                // Колір: Чорний фон, зелені імпульси
-                vec3 color = mix(vec3(0.0, 0.1, 0.0), vec3(0.22, 1.0, 0.08), smoothstep(0.0, 0.5, rings));
-                
-                // Затемнення по краях (Віньєтка)
-                float vignette = length(vUv - 0.5);
-                color *= smoothstep(0.8, 0.2, vignette);
-
-                gl_FragColor = vec4(color, 1.0);
-            }
-        `;
-
-        // Компіляція шейдерів
-        function createShader(gl, type, source) {
-            const shader = gl.createShader(type);
-            gl.shaderSource(shader, source);
-            gl.compileShader(shader);
-            return shader;
+        // --- 1. SMOOTH SCROLL (Lenis) ---
+        const lenis = new Lenis();
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
         }
+        requestAnimationFrame(raf);
 
-        const vertexShader = createShader(gl, gl.VERTEX_SHADER, vsSource);
-        const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
-        const program = gl.createProgram();
-        gl.attachShader(program, vertexShader);
-        gl.attachShader(program, fragmentShader);
-        gl.linkProgram(program);
-        gl.useProgram(program);
-
-        const positionBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-        const positions = new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]);
-        gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-
-        const positionLocation = gl.getAttribLocation(program, "position");
-        gl.enableVertexAttribArray(positionLocation);
-        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-
-        const timeLocation = gl.getUniformLocation(program, "uTime");
-        const resolutionLocation = gl.getUniformLocation(program, "uResolution");
-
-        function resizeCanvas() {
-            canvasBg.width = window.innerWidth;
-            canvasBg.height = window.innerHeight;
-            gl.viewport(0, 0, canvasBg.width, canvasBg.height);
-            gl.uniform2f(resolutionLocation, canvasBg.width, canvasBg.height);
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        let startTime = Date.now();
-        function renderPlasma() {
-            let uTime = (Date.now() - startTime) * 0.001;
-            gl.uniform1f(timeLocation, uTime);
-            gl.drawArrays(gl.TRIANGLES, 0, 6);
-            requestAnimationFrame(renderPlasma);
-        }
-        renderPlasma();
-
-        /* ---------------------------------------------------
-           B. THREE.JS (БЛИСКУЧІ ЗАМКНУТІ ФІГУРИ)
-           --------------------------------------------------- */
-        const canvas3D = document.getElementById('three-canvas');
+        // --- 2. THREE.JS CRYSTAL FLOW ---
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.z = 30;
-
-        const renderer3D = new THREE.WebGLRenderer({ canvas: canvas3D, alpha: true, antialias: true });
-        renderer3D.setSize(window.innerWidth, window.innerHeight);
-        renderer3D.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-        // Світло для глянцю
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
-        scene.add(ambientLight);
-
-        const pointLight1 = new THREE.PointLight(0x39ff14, 5, 100);
-        pointLight1.position.set(10, 10, 10);
-        scene.add(pointLight1);
-
-        const pointLight2 = new THREE.PointLight(0x00ff88, 3, 100);
-        pointLight2.position.set(-10, -10, 10);
-        scene.add(pointLight2);
-
-        // ГОЛОВНА ФІГУРА: Гіперскладний Torus Knot (Ілюзія нескінченності)
-        const knotGeometry = new THREE.TorusKnotGeometry(8, 2, 300, 64, 4, 9);
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         
-        // Матеріал: Блискучий метал/скло
-        const knotMaterial = new THREE.MeshPhysicalMaterial({
-            color: 0x001100,
-            emissive: 0x000000,
-            roughness: 0.1,    // Дуже гладкий
-            metalness: 1.0,    // Металевий
-            clearcoat: 1.0,    // Ефект лаку зверху
-            clearcoatRoughness: 0.1,
-            wireframe: false
-        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        const knot = new THREE.Mesh(knotGeometry, knotMaterial);
-        scene.add(knot);
+        camera.position.z = 5;
 
-        // Додаємо каркас (Wireframe) поверх для кіберпанк стилю
-        const wireMaterial = new THREE.MeshBasicMaterial({
-            color: 0x39ff14,
-            wireframe: true,
+        // Create Floating Geometry
+        const particlesCount = 1500;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for(let i=0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 15;
+        }
+
+        const particlesGeometry = new THREE.BufferGeometry();
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.015,
+            color: 0x007aff,
             transparent: true,
-            opacity: 0.15
+            opacity: 0.5
         });
-        const knotWire = new THREE.Mesh(knotGeometry, wireMaterial);
-        knotWire.scale.set(1.02, 1.02, 1.02); // Трохи більше, щоб обволікати
-        scene.add(knotWire);
 
-        // Інтерактив з мишею для 3D
-        let targetRotationX = 0;
-        let targetRotationY = 0;
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        // Lights
+        const pointLight = new THREE.PointLight(0xffffff, 0.1);
+        pointLight.position.x = 2;
+        pointLight.position.y = 3;
+        pointLight.position.z = 4;
+        scene.add(pointLight);
+
+        // Mouse interaction for 3D
         let mouseX = 0;
         let mouseY = 0;
 
-        document.addEventListener('mousemove', (event) => {
-            mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-            mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            // Cursor Follow
+            gsap.to(".cursor-dot", { x: mouseX, y: mouseY, duration: 0 });
+            gsap.to(".cursor-outline", { x: mouseX - 16, y: mouseY - 16, duration: 0.2 });
         });
 
+        const clock = new THREE.Clock();
+
+        function animate() {
+            const elapsedTime = clock.getElapsedTime();
+            
+            particlesMesh.rotation.y = elapsedTime * 0.05;
+            
+            if (mouseX > 0) {
+                particlesMesh.rotation.x = -(mouseY * 0.0001);
+                particlesMesh.rotation.y = (mouseX * 0.0001);
+            }
+
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // --- 3. GSAP ANIMATIONS ---
+        gsap.to(".t-line", {
+            y: 0,
+            opacity: 1,
+            stagger: 0.2,
+            duration: 1.5,
+            ease: "expo.out",
+            delay: 0.5
+        });
+
+        gsap.to(".hero-description", {
+            y: 0,
+            opacity: 1,
+            duration: 1.5,
+            ease: "expo.out",
+            delay: 1
+        });
+
+        // Parallax for cards
+        gsap.utils.toArray('.ethereal-card').forEach(card => {
+            const speed = card.getAttribute('data-speed');
+            gsap.to(card, {
+                y: -100 * speed * 10,
+                scrollTrigger: {
+                    trigger: card,
+                    scrub: true
+                }
+            });
+        });
+
+        // Resize
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
-            renderer3D.setSize(window.innerWidth, window.innerHeight);
+            renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        function animate3D() {
-            requestAnimationFrame(animate3D);
-
-            // Базове обертання фігури
-            knot.rotation.x += 0.005;
-            knot.rotation.y += 0.008;
-            knotWire.rotation.x += 0.005;
-            knotWire.rotation.y += 0.008;
-
-            // Реакція на курсор (ілюзія стеження)
-            targetRotationX = mouseY * 0.5;
-            targetRotationY = mouseX * 0.5;
-            
-            knot.rotation.x += (targetRotationX - knot.rotation.x) * 0.05;
-            knot.rotation.y += (targetRotationY - knot.rotation.y) * 0.05;
-
-            // Пульсація світла
-            const time = Date.now() * 0.001;
-            pointLight1.position.x = Math.sin(time * 0.5) * 20;
-            pointLight1.position.y = Math.cos(time * 0.3) * 20;
-
-            renderer3D.render(scene, camera);
-        }
-        animate3D();
-
-        /* ---------------------------------------------------
-           C. UI АНІМАЦІЇ (GSAP + 3D TILT)
-           --------------------------------------------------- */
-        gsap.registerPlugin(ScrollTrigger);
-
-        // Поява елементів при скролі
-        gsap.utils.toArray('.card-tilt').forEach((card, i) => {
-            gsap.from(card, {
-                scrollTrigger: {
-                    trigger: card,
-                    start: "top 80%",
-                },
-                y: 100,
-                opacity: 0,
-                rotationX: 45,
-                duration: 1,
-                ease: "power4.out",
-                delay: i * 0.2
-            });
-        });
-
-        // 3D Tilt Ефект для карток (Математика ілюзії об'єму)
-        const cards = document.querySelectorAll('.card-tilt');
-        cards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                const rotateX = ((y - centerY) / centerY) * -15; // Макс 15 градусів
-                const rotateY = ((x - centerX) / centerX) * 15;
-
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
-            });
-
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
-            });
-        });
-
-        // Магнітна кнопка
-        const magnetBtn = document.querySelector('.hover-magnet');
-        magnetBtn.addEventListener('mousemove', (e) => {
-            const rect = magnetBtn.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
-            gsap.to(magnetBtn, { x: x * 0.4, y: y * 0.4, duration: 0.3, ease: "power2.out" });
-        });
-        magnetBtn.addEventListener('mouseleave', () => {
-            gsap.to(magnetBtn, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.3)" });
-        });
-
-        console.log("%c TOXIC ILLUSION ENGINE // ACTIVE ", "background: #39ff14; color: #000; font-weight: bold; font-size: 20px; padding: 10px;");
     </script>
 </body>
 </html>
