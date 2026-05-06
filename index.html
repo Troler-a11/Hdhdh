@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEO-KYOTO | 3D Assets Premium</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            background-color: #050505;
+            color: #fff;
+            font-family: 'Noto Sans JP', sans-serif;
+            overflow-x: hidden;
+        }
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.4s;
+        }
+        .glass:hover {
+            border-color: #ff0055;
+            box-shadow: 0 0 20px rgba(255, 0, 85, 0.2);
+        }
+        .neon-text {
+            text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055;
+        }
+        .japanese-bg {
+            position: absolute;
+            right: -50px;
+            top: 20%;
+            font-size: 15rem;
+            opacity: 0.02;
+            writing-mode: vertical-rl;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="japanese-bg">デジタル芸術</div>
+
+    <nav class="flex justify-between items-center p-8 fixed w-full z-10">
+        <div class="text-2xl font-bold tracking-tighter neon-text">魂 SOUL_BLADE</div>
+        <div class="hidden md:flex gap-10 text-sm uppercase tracking-widest">
+            <a href="#" class="hover:text-pink-500 transition">Колекції</a>
+            <a href="#" class="hover:text-pink-500 transition">Катана</a>
+            <a href="#" class="hover:text-pink-500 transition">Самураї</a>
+            <a href="#" class="hover:text-pink-500 transition">Про проєкт</a>
+        </div>
+        <button class="glass px-6 py-2 rounded-full text-xs uppercase tracking-widest">Увійти</button>
+    </nav>
+
+    <main class="relative pt-40 px-8">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            <div>
+                <h1 class="text-8xl font-bold leading-none mb-6">新世界<br><span class="text-pink-500">NEW GEN</span> 3D</h1>
+                <p class="text-gray-400 text-lg max-w-md mb-10">
+                    Ексклюзивні моделі в стилі японського нео-футуризму. Найвища деталізація для ваших найкращих проектів.
+                </p>
+                <div class="flex gap-4">
+                    <button class="bg-white text-black px-10 py-4 font-bold rounded-sm hover:bg-pink-500 hover:text-white transition">КАТАЛОГ</button>
+                    <button class="glass px-10 py-4 font-bold rounded-sm">ДЕМO</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="glass p-6 rounded-xl mt-10">
+                    <div class="h-40 bg-gradient-to-br from-gray-800 to-transparent rounded mb-4"></div>
+                    <h3 class="font-bold">CYBER KATANA V.1</h3>
+                    <p class="text-xs text-pink-500">$4,500.00</p>
+                </div>
+                <div class="glass p-6 rounded-xl">
+                    <div class="h-40 bg-gradient-to-br from-pink-900 to-transparent rounded mb-4"></div>
+                    <h3 class="font-bold">ONYX MASK</h3>
+                    <p class="text-xs text-pink-500">$12,000.00</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Ініціалізація 3D фону
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Геометрія - Абстрактне "Сонце"
+        const geometry = new THREE.IcosahedronGeometry(2, 2);
+        const material = new THREE.MeshStandardMaterial({ 
+            color: 0xff0055, 
+            wireframe: true,
+            emissive: 0xff0055,
+            emissiveIntensity: 0.5
+        });
+        const sphere = new THREE.Mesh(geometry, material);
+        scene.add(sphere);
+
+        // Світло
+        const pointLight = new THREE.PointLight(0xffffff, 1);
+        pointLight.position.set(5, 5, 5);
+        scene.add(pointLight);
+
+        const ambLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambLight);
+
+        camera.position.z = 5;
+
+        // Анімація
+        function animate() {
+            requestAnimationFrame(animate);
+            sphere.rotation.x += 0.002;
+            sphere.rotation.y += 0.002;
+            renderer.render(scene, camera);
+        }
+
+        // Взаємодія з мишею
+        window.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 2;
+            const y = (e.clientY / window.innerHeight - 0.5) * 2;
+            sphere.position.x = x * 0.5;
+            sphere.position.y = -y * 0.5;
+        });
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+</html>
