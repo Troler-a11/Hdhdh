@@ -1,941 +1,331 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NIKE | Premium Sneakers & 3D Experience</title>
+    <title>NIKE ELITE | Professional E-commerce</title>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
     <style>
-        /* === RESET & VARIABLES === */
+        /* === CORE VARIABLES === */
         :root {
-            --primary-color: #f66a05;
-            --bg-color: #0a0a0a;
-            --text-main: #ffffff;
-            --text-muted: #888888;
-            --card-bg: #151515;
-            --border-color: #333333;
-            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --primary: #f66a05;
+            --bg: #050505;
+            --card: #111111;
+            --text: #ffffff;
+            --muted: #888888;
+            --accent: #222222;
+            --success: #00ff88;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; outline: none; }
+        body { background: var(--bg); color: var(--text); overflow-x: hidden; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        ul {
-            list-style: none;
-        }
-
-        /* === TYPOGRAPHY === */
-        h1, h2, h3, .brand-font {
-            font-family: 'Anton', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        h1 { font-size: clamp(3rem, 8vw, 8rem); line-height: 1; }
-        h2 { font-size: clamp(2rem, 5vw, 4rem); margin-bottom: 2rem; }
+        /* === UI COMPONENTS === */
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 5%; }
+        .flex { display: flex; align-items: center; }
+        .hidden { display: none !important; }
+        .btn { padding: 12px 28px; border-radius: 4px; font-weight: 800; text-transform: uppercase; cursor: pointer; transition: var(--transition); border: none; font-size: 14px; }
+        .btn-primary { background: var(--text); color: var(--bg); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,255,255,0.1); }
 
         /* === NAVIGATION === */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem 5%;
-            background: rgba(10, 10, 10, 0.9);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .logo {
-            font-size: 2rem;
-            font-weight: 800;
-            letter-spacing: -1px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo svg {
-            width: 40px;
-            fill: var(--text-main);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-links li a {
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-            transition: var(--transition);
-        }
-
-        .nav-links li a:hover {
-            color: var(--primary-color);
-        }
-
-        .nav-icons {
-            display: flex;
-            gap: 1.5rem;
-        }
-
-        .nav-icons span {
-            cursor: pointer;
-            font-size: 1.2rem;
-            transition: var(--transition);
-        }
-
-        .nav-icons span:hover {
-            color: var(--primary-color);
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            cursor: pointer;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .mobile-menu-btn div {
-            width: 25px;
-            height: 2px;
-            background: var(--text-main);
-            transition: var(--transition);
-        }
-
-        /* === HERO SECTION === */
-        .hero {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            padding: 0 5%;
-            overflow: hidden;
-            margin-top: 60px;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 10;
-            text-align: center;
-            max-width: 800px;
-        }
-
-        .hero-subtitle {
-            color: var(--primary-color);
-            font-weight: 600;
-            letter-spacing: 4px;
-            margin-bottom: 1rem;
-            display: block;
-            text-transform: uppercase;
-        }
-
-        .hero-title {
-            background: linear-gradient(to right, #fff, #555);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1.5rem;
-        }
-
-        .hero-desc {
-            color: var(--text-muted);
-            font-size: 1.2rem;
-            margin-bottom: 2.5rem;
-            line-height: 1.6;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 1rem 2.5rem;
-            background: var(--text-main);
-            color: var(--bg-color);
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-radius: 50px;
-            transition: var(--transition);
-            border: 2px solid var(--text-main);
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background: var(--bg-color);
-            color: var(--text-main);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: var(--text-main);
-            margin-left: 1rem;
-        }
-
-        .btn-outline:hover {
-            background: var(--text-main);
-            color: var(--bg-color);
-        }
-
-        .hero-3d-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100vw;
-            height: 100vh;
-            z-index: 1;
-            opacity: 0.6;
-            pointer-events: none; /* Let clicks pass through to content */
-        }
-
-        model-viewer {
-            width: 100%;
-            height: 100%;
-            --poster-color: transparent;
-        }
-
-        /* === 3D INTERACTIVE SHOWCASE === */
-        .showcase-3d {
-            padding: 5rem 5%;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
-            background: #000;
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .showcase-info h2 {
-            margin-bottom: 1rem;
-        }
-
-        .showcase-info p {
-            color: var(--text-muted);
-            margin-bottom: 2rem;
-            line-height: 1.7;
-        }
-
-        .features-list {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .feature-item h4 {
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-        }
-
-        .feature-item p {
-            font-size: 0.9rem;
-            margin-bottom: 0;
-        }
-
-        .interactive-viewer {
-            width: 100%;
-            height: 600px;
-            background: radial-gradient(circle at center, #2a2a2a 0%, #000 70%);
-            border-radius: 20px;
-            position: relative;
-            cursor: grab;
-        }
-
-        .interactive-viewer:active {
-            cursor: grabbing;
-        }
-
-        .viewer-hint {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255,255,255,0.1);
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-            pointer-events: none;
-            backdrop-filter: blur(5px);
-        }
-
-        /* === PRODUCT GRID (CATALOG) === */
-        .catalog {
-            padding: 8rem 5%;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 4rem;
-        }
-
-        .filters {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .filter-btn {
-            background: transparent;
-            color: var(--text-muted);
-            border: 1px solid var(--border-color);
-            padding: 0.5rem 1.5rem;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .filter-btn.active, .filter-btn:hover {
-            background: var(--text-main);
-            color: var(--bg-color);
-            border-color: var(--text-main);
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2.5rem;
-        }
-
-        .product-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 2rem;
-            position: relative;
-            transition: var(--transition);
-            border: 1px solid transparent;
-            overflow: hidden;
-        }
-
-        .product-card:hover {
-            transform: translateY(-10px);
-            border-color: #333;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-        }
-
-        .product-badge {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: var(--primary-color);
-            color: #fff;
-            padding: 5px 10px;
-            font-size: 0.7rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            border-radius: 5px;
-            z-index: 2;
-        }
-
-        .product-img {
-            width: 100%;
-            height: 250px;
-            object-fit: contain;
-            transition: var(--transition);
-            margin-bottom: 1.5rem;
-            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.4));
-        }
-
-        .product-card:hover .product-img {
-            transform: scale(1.1) rotate(-5deg);
-        }
-
-        .product-info h3 {
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-            text-transform: none;
-            letter-spacing: normal;
-        }
-
-        .product-category {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .product-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .product-price {
-            font-size: 1.5rem;
-            font-weight: 800;
-        }
-
-        .add-to-cart {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--text-main);
-            color: var(--bg-color);
-            border: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .add-to-cart:hover {
-            background: var(--primary-color);
-            color: #fff;
-            transform: scale(1.1);
-        }
-
-        /* === BANNER SECTION === */
-        .banner {
-            margin: 5rem 5%;
-            height: 400px;
-            border-radius: 20px;
-            background: linear-gradient(45deg, #000, #1a1a1a);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 4rem;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-        }
-
-        .banner-content {
-            max-width: 500px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .banner-content h2 {
-            margin-bottom: 1rem;
-            font-size: 3rem;
-        }
-
-        .banner-img {
-            position: absolute;
-            right: -5%;
-            top: 50%;
-            transform: translateY(-50%) rotate(-15deg);
-            width: 600px;
-            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8));
-            transition: var(--transition);
-        }
-
-        .banner:hover .banner-img {
-            transform: translateY(-50%) rotate(-5deg) scale(1.05);
-        }
-
-        /* === FOOTER === */
-        footer {
-            background: #050505;
-            padding: 5rem 5% 2rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1.5fr;
-            gap: 4rem;
-            margin-bottom: 4rem;
-        }
-
-        .footer-logo svg {
-            width: 60px;
-            fill: var(--text-main);
-            margin-bottom: 1rem;
-        }
-
-        .footer-desc {
-            color: var(--text-muted);
-            line-height: 1.6;
-            margin-bottom: 2rem;
-        }
-
-        .social-icons {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .social-icons a {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--card-bg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: var(--transition);
-        }
-
-        .social-icons a:hover {
-            background: var(--primary-color);
-            color: #fff;
-            transform: translateY(-3px);
-        }
-
-        .footer-col h4 {
-            font-family: 'Anton', sans-serif;
-            letter-spacing: 1px;
-            margin-bottom: 1.5rem;
-            font-size: 1.2rem;
-        }
-
-        .footer-col ul li {
-            margin-bottom: 0.8rem;
-        }
-
-        .footer-col ul li a {
-            color: var(--text-muted);
-            transition: var(--transition);
-        }
-
-        .footer-col ul li a:hover {
-            color: var(--text-main);
-            padding-left: 5px;
-        }
-
-        .newsletter-form {
-            display: flex;
-            margin-top: 1rem;
-        }
-
-        .newsletter-form input {
-            flex: 1;
-            padding: 10px 15px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: #fff;
-            border-radius: 5px 0 0 5px;
-            outline: none;
-        }
-
-        .newsletter-form button {
-            padding: 10px 20px;
-            background: var(--text-main);
-            color: var(--bg-color);
-            border: none;
-            font-weight: 800;
-            border-radius: 0 5px 5px 0;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .newsletter-form button:hover {
-            background: var(--primary-color);
-            color: #fff;
-        }
-
-        .footer-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 2rem;
-            border-top: 1px solid #1a1a1a;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        /* === RESPONSIVE DESIGN === */
-        @media (max-width: 1024px) {
-            h1 { font-size: 5rem; }
-            .showcase-3d { grid-template-columns: 1fr; }
-            .interactive-viewer { order: -1; }
-            .footer-grid { grid-template-columns: 1fr 1fr; }
-            .banner { flex-direction: column; text-align: center; justify-content: center; padding: 2rem; }
-            .banner-img { position: relative; right: auto; top: auto; transform: none; width: 80%; margin-top: 2rem; }
-            .banner:hover .banner-img { transform: scale(1.05); }
-        }
+        nav { position: fixed; top: 0; width: 100%; height: 80px; z-index: 2000; border-bottom: 1px solid var(--accent); background: rgba(5,5,5,0.8); backdrop-filter: blur(15px); }
+        .nav-inner { height: 100%; justify-content: space-between; display: flex; align-items: center; }
+        .logo { font-family: 'Anton'; font-size: 2rem; letter-spacing: 2px; }
+        .nav-menu { display: flex; gap: 30px; }
+        .nav-menu a { color: var(--text); text-decoration: none; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .nav-actions { display: flex; gap: 20px; align-items: center; }
+        .icon-btn { background: none; border: none; color: white; cursor: pointer; font-size: 1.2rem; position: relative; }
+        #cartCount { position: absolute; top: -8px; right: -8px; background: var(--primary); font-size: 10px; padding: 2px 6px; border-radius: 50%; }
+
+        /* === SEARCH SYSTEM === */
+        #searchOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 3000; display: flex; flex-direction: column; align-items: center; padding-top: 100px; transform: translateY(-100%); transition: var(--transition); }
+        #searchOverlay.active { transform: translateY(0); }
+        .search-box { width: 80%; max-width: 600px; position: relative; }
+        .search-box input { width: 100%; background: none; border: none; border-bottom: 2px solid var(--text); padding: 15px; color: white; font-size: 2rem; font-family: 'Anton'; }
+
+        /* === AUTH SYSTEM === */
+        #authModal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 4000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .auth-card { background: var(--card); padding: 40px; border-radius: 12px; width: 400px; border: 1px solid var(--accent); }
+        .auth-card h2 { font-family: 'Anton'; margin-bottom: 20px; }
+        .auth-card input { width: 100%; padding: 12px; margin-bottom: 15px; background: #222; border: 1px solid #333; color: white; border-radius: 4px; }
+        .auth-card .user-info { display: flex; flex-direction: column; align-items: center; }
+        .avatar { width: 80px; height: 80px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 15px; }
+
+        /* === CART SYSTEM === */
+        #cartDrawer { position: fixed; right: 0; top: 0; height: 100vh; width: 400px; background: var(--card); z-index: 3500; transform: translateX(100%); transition: var(--transition); border-left: 1px solid var(--accent); padding: 30px; display: flex; flex-direction: column; }
+        #cartDrawer.open { transform: translateX(0); }
+        .cart-items { flex: 1; overflow-y: auto; margin-top: 20px; }
+        .cart-item { display: flex; gap: 15px; margin-bottom: 20px; align-items: center; border-bottom: 1px solid #222; padding-bottom: 15px; }
+        .cart-item img { width: 70px; height: 70px; object-fit: cover; border-radius: 8px; }
+        .cart-total { margin-top: auto; padding-top: 20px; border-top: 2px solid var(--accent); }
+
+        /* === PRODUCT GRID === */
+        .hero { height: 90vh; display: flex; align-items: center; padding-top: 80px; }
+        .hero-text { flex: 1; }
+        .hero-3d { flex: 1; height: 100%; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; padding: 50px 0; }
+        .p-card { background: var(--card); border-radius: 12px; padding: 20px; transition: var(--transition); position: relative; }
+        .p-card:hover { transform: scale(1.02); background: #1a1a1a; }
+        .p-img { width: 100%; height: 220px; object-fit: contain; margin-bottom: 15px; }
+        .p-title { font-weight: 600; margin-bottom: 5px; }
+        .p-price { color: var(--primary); font-weight: 800; font-size: 1.2rem; }
+
+        /* === SUCCESS STATE === */
+        #successScreen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .checkmark { width: 100px; height: 100px; border-radius: 50%; border: 5px solid var(--success); color: var(--success); font-size: 4rem; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; animation: scaleUp 0.5s ease; }
+        @keyframes scaleUp { from { transform: scale(0); } to { transform: scale(1); } }
 
         @media (max-width: 768px) {
-            .nav-links {
-                position: absolute;
-                top: 100%;
-                left: -100%;
-                width: 100%;
-                height: 100vh;
-                background: rgba(10, 10, 10, 0.95);
-                backdrop-filter: blur(10px);
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                transition: var(--transition);
-            }
-            .nav-links.active { left: 0; }
-            .mobile-menu-btn { display: flex; }
-            h1 { font-size: 4rem; }
-            .section-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
-            .filters { overflow-x: auto; width: 100%; padding-bottom: 10px; }
-            .footer-grid { grid-template-columns: 1fr; }
+            .nav-menu { display: none; }
+            #cartDrawer { width: 100%; }
+            .hero { flex-direction: column; text-align: center; }
         }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="logo">
-            <svg viewBox="0 0 24 24"><path d="M22.7 2.1c-.5-.3-1.2-.4-1.8-.2L3 8.3c-.6.2-1 .7-1.1 1.3-.1.6.2 1.2.7 1.5l6.5 3.3 3.3 6.5c.3.5.9.8 1.5.7.6-.1 1.1-.5 1.3-1.1L22.9 3.9c.2-.6.1-1.3-.2-1.8zM14.6 15l-2.4-4.7 6.4-6.4-4 11.1z"/></svg>
-            NIKE
+    <div id="searchOverlay">
+        <button class="icon-btn" onclick="toggleSearch()" style="position:absolute; top:30px; right:30px; font-size:2rem;">&times;</button>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="SEARCH SNEAKERS..." onkeyup="handleSearch(event)">
+            <p style="margin-top:20px; color:var(--muted)">Press Enter to find your style</p>
         </div>
-        <ul class="nav-links" id="navLinks">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#new">New Releases</a></li>
-            <li><a href="#men">Men</a></li>
-            <li><a href="#women">Women</a></li>
-            <li><a href="#3d">3D Studio</a></li>
-        </ul>
-        <div class="nav-icons">
-            <span>🔍</span>
-            <span>❤️</span>
-            <span>🛒</span>
-            <div class="mobile-menu-btn" id="menuBtn">
-                <div></div><div></div><div></div>
+    </div>
+
+    <div id="authModal">
+        <div class="auth-card" id="authContent">
+            </div>
+    </div>
+
+    <div id="cartDrawer">
+        <div class="flex" style="justify-content:space-between; margin-bottom:20px;">
+            <h2 class="brand-font">YOUR CART</h2>
+            <button class="icon-btn" onclick="toggleCart()" style="font-size:1.5rem;">&times;</button>
+        </div>
+        <div class="cart-items" id="cartItemsList"></div>
+        <div class="cart-total">
+            <div class="flex" style="justify-content:space-between; margin-bottom:20px;">
+                <span>Total:</span>
+                <span id="cartTotalSum" style="font-size:1.5rem; font-weight:800;">$0</span>
+            </div>
+            <button class="btn btn-primary" style="width:100%;" onclick="checkout()">Checkout Now</button>
+        </div>
+    </div>
+
+    <div id="successScreen">
+        <div class="checkmark">✓</div>
+        <h1 style="font-size:3rem; font-family:'Anton'">ORDER PLACED!</h1>
+        <p style="margin:20px 0; color:var(--muted)">Your Nike Elite gear is on the way.</p>
+        <button class="btn btn-primary" onclick="window.location.reload()">Return Home</button>
+    </div>
+
+    <nav>
+        <div class="container nav-inner">
+            <div class="logo">NIKE</div>
+            <div class="nav-menu">
+                <a href="#">New Releases</a>
+                <a href="#">Men</a>
+                <a href="#">Women</a>
+                <a href="#">3D Design</a>
+            </div>
+            <div class="nav-actions">
+                <button class="icon-btn" onclick="toggleSearch()">🔍</button>
+                <button class="icon-btn" id="authBtn" onclick="openAuth()">👤</button>
+                <button class="icon-btn" onclick="toggleCart()">🛒 <span id="cartCount">0</span></button>
             </div>
         </div>
     </nav>
 
-    <section class="hero" id="home">
-        <div class="hero-3d-container">
-            <model-viewer 
-                src="https://modelviewer.dev/shared-assets/models/Shoe.gltf" 
-                auto-rotate 
-                rotation-per-second="30deg"
-                camera-controls="false"
-                disable-zoom
-                interaction-prompt="none">
-            </model-viewer>
-        </div>
-        
-        <div class="hero-content">
-            <span class="hero-subtitle">Future of Footwear</span>
-            <h1 class="hero-title">AIR MAX DYNAMIC</h1>
-            <p class="hero-desc">Experience the next generation of comfort and style. Engineered for the future, designed for today. Explore our latest collection in stunning 3D.</p>
-            <a href="#catalog" class="btn">Shop Now</a>
-            <a href="#3d" class="btn btn-outline">Explore 3D</a>
-        </div>
-    </section>
+    <main class="container">
+        <section class="hero">
+            <div class="hero-text">
+                <h1 style="font-family:'Anton'; font-size: 5rem; line-height: 1;">ELITE<br><span style="color:var(--primary)">PERFORMANCE</span></h1>
+                <p style="color:var(--muted); margin: 20px 0; max-width: 450px;">The next evolution of Nike Air technology. Explore, interact, and secure your pair today with our 3D configurator.</p>
+                <button class="btn btn-primary" onclick="document.getElementById('shop').scrollIntoView()">Shop Collection</button>
+            </div>
+            <div class="hero-3d">
+                <model-viewer src="https://modelviewer.dev/shared-assets/models/Shoe.gltf" auto-rotate camera-controls disable-zoom style="width:100%; height:100%;"></model-viewer>
+            </div>
+        </section>
 
-    <section class="showcase-3d" id="3d">
-        <div class="interactive-viewer">
-            <model-viewer 
-                src="https://modelviewer.dev/shared-assets/models/Shoe.gltf" 
-                alt="A 3D model of a Nike sneaker" 
-                auto-rotate 
-                camera-controls 
-                shadow-intensity="1" 
-                exposure="1"
-                environment-image="neutral"
-                style="width: 100%; height: 100%;">
-            </model-viewer>
-            <div class="viewer-hint">Drag to rotate • Scroll to zoom</div>
-        </div>
-        <div class="showcase-info">
-            <span class="hero-subtitle">Interactive Studio</span>
-            <h2>Examine Every Detail</h2>
-            <p>Our premium 3D models allow you to inspect the materials, stitching, and architecture of the Air Max Dynamic before you buy. Rotate, zoom, and explore.</p>
-            
-            <div class="features-list">
-                <div class="feature-item">
-                    <h4>Flyknit Upper</h4>
-                    <p>Breathable, stretchable support.</p>
+        <section id="shop">
+            <h2 style="font-family:'Anton'; font-size: 2.5rem; margin-top: 50px;">LATEST DROPS</h2>
+            <div class="grid" id="productGrid">
                 </div>
-                <div class="feature-item">
-                    <h4>Air Technology</h4>
-                    <p>Maximum impact cushioning.</p>
-                </div>
-                <div class="feature-item">
-                    <h4>Carbon Plate</h4>
-                    <p>Propulsive energy return.</p>
-                </div>
-                <div class="feature-item">
-                    <h4>Eco-Materials</h4>
-                    <p>Made with 20% recycled content.</p>
-                </div>
-            </div>
-            <button class="btn">Customize Your Pair</button>
-        </div>
-    </section>
-
-    <section class="catalog" id="catalog">
-        <div class="section-header">
-            <h2>Trending Now</h2>
-            <div class="filters">
-                <button class="filter-btn active">All</button>
-                <button class="filter-btn">Running</button>
-                <button class="filter-btn">Basketball</button>
-                <button class="filter-btn">Lifestyle</button>
-            </div>
-        </div>
-
-        <div class="grid">
-            <div class="product-card">
-                <div class="product-badge">New</div>
-                <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Nike Red" class="product-img">
-                <div class="product-info">
-                    <h3>Nike Air Max 270</h3>
-                    <div class="product-category">Men's Lifestyle Shoes</div>
-                    <div class="product-bottom">
-                        <span class="product-price">$160</span>
-                        <button class="add-to-cart">+</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Nike Orange" class="product-img">
-                <div class="product-info">
-                    <h3>Nike ZoomX Invincible</h3>
-                    <div class="product-category">Men's Road Running</div>
-                    <div class="product-bottom">
-                        <span class="product-price">$180</span>
-                        <button class="add-to-cart">+</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-badge" style="background:#555;">Best Seller</div>
-                <img src="https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Nike Jordan" class="product-img">
-                <div class="product-info">
-                    <h3>Air Jordan 1 Retro</h3>
-                    <div class="product-category">Men's Basketball Shoes</div>
-                    <div class="product-bottom">
-                        <span class="product-price">$170</span>
-                        <button class="add-to-cart">+</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Nike Green" class="product-img">
-                <div class="product-info">
-                    <h3>Nike Air Force 1 '07</h3>
-                    <div class="product-category">Women's Shoes</div>
-                    <div class="product-bottom">
-                        <span class="product-price">$110</span>
-                        <button class="add-to-cart">+</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-badge">Limited</div>
-                <img src="https://images.unsplash.com/photo-1608231387042-66d1773070a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Nike Black" class="product-img">
-                <div class="product-info">
-                    <h3>Nike Dunk Low</h3>
-                    <div class="product-category">Men's Shoes</div>
-                    <div class="product-bottom">
-                        <span class="product-price">$115</span>
-                        <button class="add-to-cart">+</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Nike Multi" class="product-img">
-                <div class="product-info">
-                    <h3>Nike React Infinity</h3>
-                    <div class="product-category">Women's Running Shoes</div>
-                    <div class="product-bottom">
-                        <span class="product-price">$160</span>
-                        <button class="add-to-cart">+</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1514989940723-e8e51635b782?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Nike Vapor" class="product-img">
-                <div class="product-info">
-                    <h3>Nike VaporFly NEXT%</h3>
-                    <div class="product-category">Racing Shoes</div>
-                    <div class="product-bottom">
-                        <span class="product-price">$250</span>
-                        <button class="add-to-cart">+</button>
-                    </div>
-                </div>
-            </div>
-
-             <div class="product-card">
-                <div class="product-badge" style="background:#555;">Member Access</div>
-                <img src="https://images.unsplash.com/photo-1584735174965-48c48d7edce7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Nike Blazer" class="product-img">
-                <div class="product-info">
-                    <h3>Nike Blazer Mid '77</h3>
-                    <div class="product-category">Vintage Lifestyle</div>
-                    <div class="product-bottom">
-                        <span class="product-price">$105</span>
-                        <button class="add-to-cart">+</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="banner">
-        <div class="banner-content">
-            <span class="hero-subtitle">Just Do It</span>
-            <h2>GEAR UP FOR THE SEASON</h2>
-            <p style="color: var(--text-muted); margin-bottom: 2rem;">Unlock exclusive access to new styles and member-only drops. Download the app today.</p>
-            <button class="btn">Get The App</button>
-        </div>
-        <img src="https://images.unsplash.com/photo-1552346154-21d32810baa3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Sneaker Banner" class="banner-img">
-    </section>
-
-    <footer>
-        <div class="footer-grid">
-            <div class="footer-col">
-                <div class="footer-logo">
-                    <svg viewBox="0 0 24 24"><path d="M22.7 2.1c-.5-.3-1.2-.4-1.8-.2L3 8.3c-.6.2-1 .7-1.1 1.3-.1.6.2 1.2.7 1.5l6.5 3.3 3.3 6.5c.3.5.9.8 1.5.7.6-.1 1.1-.5 1.3-1.1L22.9 3.9c.2-.6.1-1.3-.2-1.8zM14.6 15l-2.4-4.7 6.4-6.4-4 11.1z"/></svg>
-                </div>
-                <p class="footer-desc">Nike delivers innovative products, experiences and services to inspire athletes. Explore our premium 3D sneaker collection built for performance.</p>
-                <div class="social-icons">
-                    <a href="#">Fb</a>
-                    <a href="#">Tw</a>
-                    <a href="#">Ig</a>
-                    <a href="#">Yt</a>
-                </div>
-            </div>
-            
-            <div class="footer-col">
-                <h4>GET HELP</h4>
-                <ul>
-                    <li><a href="#">Order Status</a></li>
-                    <li><a href="#">Shipping & Delivery</a></li>
-                    <li><a href="#">Returns</a></li>
-                    <li><a href="#">Payment Options</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-col">
-                <h4>ABOUT NIKE</h4>
-                <ul>
-                    <li><a href="#">News</a></li>
-                    <li><a href="#">Careers</a></li>
-                    <li><a href="#">Investors</a></li>
-                    <li><a href="#">Sustainability</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-col">
-                <h4>JOIN OUR NEWSLETTER</h4>
-                <p style="color: var(--text-muted); font-size: 0.9rem;">Sign up to get the latest on sales, new releases and more …</p>
-                <form class="newsletter-form" onsubmit="event.preventDefault();">
-                    <input type="email" placeholder="Enter email address" required>
-                    <button type="submit">→</button>
-                </form>
-            </div>
-        </div>
-
-        <div class="footer-bottom">
-            <p>&copy; 2026 Nike, Inc. All Rights Reserved.</p>
-            <div style="display: flex; gap: 1rem;">
-                <a href="#">Terms of Use</a>
-                <a href="#">Privacy Policy</a>
-            </div>
-        </div>
-    </footer>
+        </section>
+    </main>
 
     <script>
-        // Mobile Menu Toggle
-        const menuBtn = document.getElementById('menuBtn');
-        const navLinks = document.getElementById('navLinks');
+        /* === DATABASE === */
+        const products = [
+            { id: 1, name: "Air Max 270", price: 160, img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400", cat: "Running" },
+            { id: 2, name: "ZoomX Invincible", price: 180, img: "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400", cat: "Running" },
+            { id: 3, name: "Jordan 1 Retro", price: 170, img: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400", cat: "Lifestyle" },
+            { id: 4, name: "Air Force 1 '07", price: 110, img: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400", cat: "Lifestyle" },
+            { id: 5, name: "Nike Dunk Low", price: 115, img: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400", cat: "Skate" },
+            { id: 6, name: "React Infinity", price: 160, img: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400", cat: "Running" }
+        ];
 
-        menuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
+        let cart = [];
+        let currentUser = JSON.parse(localStorage.getItem('nike_user')) || null;
+
+        /* === INITIALIZATION === */
+        function init() {
+            renderProducts(products);
+            updateCartUI();
+            checkUserStatus();
+        }
+
+        /* === SEARCH LOGIC === */
+        function toggleSearch() {
+            document.getElementById('searchOverlay').classList.toggle('active');
+            if(document.getElementById('searchOverlay').classList.contains('active')) {
+                setTimeout(() => document.getElementById('searchInput').focus(), 500);
+            }
+        }
+
+        function handleSearch(e) {
+            const term = e.target.value.toLowerCase();
+            const filtered = products.filter(p => p.name.toLowerCase().includes(term));
+            renderProducts(filtered);
+            if(e.key === "Enter") toggleSearch();
+        }
+
+        /* === PRODUCT RENDERING === */
+        function renderProducts(data) {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = data.map(p => `
+                <div class="p-card">
+                    <img src="${p.img}" class="p-img">
+                    <div class="p-title">${p.name}</div>
+                    <div style="color:var(--muted); font-size:0.8rem; margin-bottom:10px;">${p.cat}</div>
+                    <div class="flex" style="justify-content:space-between">
+                        <span class="p-price">$${p.price}</span>
+                        <button class="btn btn-primary" style="padding:8px 15px" onclick="addToCart(${p.id})">ADD +</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* === CART LOGIC === */
+        function toggleCart() {
+            document.getElementById('cartDrawer').classList.toggle('open');
+        }
+
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            cart.push(product);
+            updateCartUI();
+            if(!document.getElementById('cartDrawer').classList.contains('open')) toggleCart();
+        }
+
+        function updateCartUI() {
+            const list = document.getElementById('cartItemsList');
+            const count = document.getElementById('cartCount');
+            const total = document.getElementById('cartTotalSum');
             
-            // Animate hamburger icon
-            const bars = menuBtn.children;
-            if(navLinks.classList.contains('active')) {
-                bars[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
-                bars[1].style.opacity = '0';
-                bars[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
-            } else {
-                bars[0].style.transform = 'none';
-                bars[1].style.opacity = '1';
-                bars[2].style.transform = 'none';
+            count.innerText = cart.length;
+            
+            list.innerHTML = cart.map((item, index) => `
+                <div class="cart-item">
+                    <img src="${item.img}">
+                    <div style="flex:1">
+                        <div style="font-weight:600">${item.name}</div>
+                        <div style="color:var(--primary)">$${item.price}</div>
+                    </div>
+                    <button class="icon-btn" onclick="removeFromCart(${index})">🗑️</button>
+                </div>
+            `).join('');
+
+            const sum = cart.reduce((acc, curr) => acc + curr.price, 0);
+            total.innerText = `$${sum}`;
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function checkout() {
+            if(!currentUser) {
+                alert("Please login first to complete your purchase!");
+                openAuth();
+                return;
             }
-        });
-
-        // Close menu on link click (Mobile)
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                if(window.innerWidth <= 768) {
-                    navLinks.classList.remove('active');
-                    const bars = menuBtn.children;
-                    bars[0].style.transform = 'none';
-                    bars[1].style.opacity = '1';
-                    bars[2].style.transform = 'none';
-                }
-            });
-        });
-
-        // Filter Buttons Logic (Visual only for template)
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                filterBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            });
-        });
-
-        // Sticky Navbar Effect on Scroll
-        window.addEventListener('scroll', () => {
-            const nav = document.querySelector('nav');
-            if(window.scrollY > 50) {
-                nav.style.background = 'rgba(5, 5, 5, 0.98)';
-                nav.style.boxShadow = '0 5px 20px rgba(0,0,0,0.5)';
-            } else {
-                nav.style.background = 'rgba(10, 10, 10, 0.9)';
-                nav.style.boxShadow = 'none';
+            if(cart.length === 0) {
+                alert("Your cart is empty!");
+                return;
             }
-        });
-        
-        // Add to Cart Animation Simulation
-        const cartBtns = document.querySelectorAll('.add-to-cart');
-        cartBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const originalText = this.innerHTML;
-                this.innerHTML = '✓';
-                this.style.background = '#4CAF50';
-                this.style.color = '#fff';
-                
-                setTimeout(() => {
-                    this.innerHTML = originalText;
-                    this.style.background = 'var(--text-main)';
-                    this.style.color = 'var(--bg-color)';
-                }, 2000);
-            });
-        });
+            document.getElementById('successScreen').style.display = 'flex';
+        }
+
+        /* === AUTH LOGIC === */
+        function openAuth() {
+            const modal = document.getElementById('authModal');
+            const content = document.getElementById('authContent');
+            modal.style.display = 'flex';
+
+            if(currentUser) {
+                content.innerHTML = `
+                    <div class="user-info">
+                        <div class="avatar">${currentUser.name[0]}</div>
+                        <h3>Welcome back, ${currentUser.name}!</h3>
+                        <p style="color:var(--muted); margin:10px 0;">${currentUser.email}</p>
+                        <button class="btn btn-primary" style="width:100%; margin-top:20px;" onclick="logout()">Logout</button>
+                        <button class="btn" style="color:white; margin-top:10px" onclick="closeAuth()">Close</button>
+                    </div>
+                `;
+            } else {
+                content.innerHTML = `
+                    <h2>MEMBER LOGIN</h2>
+                    <input type="text" id="authName" placeholder="Full Name">
+                    <input type="email" id="authEmail" placeholder="Email Address">
+                    <input type="password" placeholder="Password">
+                    <button class="btn btn-primary" style="width:100%" onclick="login()">Sign In</button>
+                    <p onclick="closeAuth()" style="text-align:center; margin-top:15px; cursor:pointer; color:var(--muted)">Cancel</p>
+                `;
+            }
+        }
+
+        function login() {
+            const name = document.getElementById('authName').value;
+            const email = document.getElementById('authEmail').value;
+            if(!name || !email) return alert("Fill all fields");
+            
+            currentUser = { name, email };
+            localStorage.setItem('nike_user', JSON.stringify(currentUser));
+            closeAuth();
+            checkUserStatus();
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('nike_user');
+            closeAuth();
+            checkUserStatus();
+        }
+
+        function closeAuth() {
+            document.getElementById('authModal').style.display = 'none';
+        }
+
+        function checkUserStatus() {
+            const btn = document.getElementById('authBtn');
+            btn.style.color = currentUser ? '#00ff88' : 'white';
+        }
+
+        window.onclick = (e) => {
+            if(e.target == document.getElementById('authModal')) closeAuth();
+        }
+
+        // Run
+        init();
     </script>
 </body>
 </html>
-
-```
